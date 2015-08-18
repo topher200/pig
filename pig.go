@@ -5,9 +5,9 @@
 package main
 
 import (
-	"time"
 	"log"
 	"math/rand"
+	"time"
 )
 
 const win = 100 // The winning score in a game of Pig
