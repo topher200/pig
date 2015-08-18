@@ -82,3 +82,8 @@ func play(strategy0, strategy1 strategy) int {
 	}
 	return currentPlayer
 }
+
+func main() {
+	rand.Seed(time.Now().UTC().UnixNano())
+	log.Print(play(stayAtK(5), stayAtK(49)))
+}
