@@ -5,7 +5,8 @@
 package main
 
 import (
-	// "log"
+	"time"
+	"log"
 	"math/rand"
 )
 
@@ -76,6 +77,7 @@ func play(strategy0, strategy1 strategy) int {
 			} else {
 				currentPlayer = 1
 			}
+			log.Print("Turn is over. scores, new currentPlayer:", s, currentPlayer)
 		}
 	}
 	return currentPlayer
