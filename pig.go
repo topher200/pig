@@ -31,7 +31,7 @@ type action func(current score) (result score, turnIsOver bool)
 // roll. If the roll value is 1, the thisTurn score is abandoned, and the
 // players' roles swap. Otherwise, the roll value is added to thisTurn.
 func roll(s score) (score, bool) {
-	outcome := rand.Intn(1) + 1 // A die roll: a random int [1, 6]
+	outcome := rand.Intn(6) + 1 // A die roll: a random int [1, 6]
 	if outcome == 1 {
 		return score{s.opponent, s.player, 0}, true
 	}
