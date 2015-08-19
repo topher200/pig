@@ -7,10 +7,9 @@ package main
 import (
 	"log"
 	"math/rand"
-	"time"
 )
 
-const win = 100 // The winning score in a game of Pig
+const winningScore = 100 // The winning score in a game of Pig
 
 // A score includes scores accumlated in previous turns for each player, as well
 // as the points scored by the current player in this turn.
@@ -68,7 +67,7 @@ func play(strategy0, strategy1 strategy) int {
 	var turnIsOver bool
 	// Randomly decide who goes first
 	currentPlayer := rand.Intn(2)
-	for s.player+s.thisTurn < win {
+	for s.player+s.thisTurn < winningScore {
 		action := strategies[currentPlayer](s)
 		s, turnIsOver = action(s)
 		if turnIsOver {
@@ -77,12 +76,45 @@ func play(strategy0, strategy1 strategy) int {
 			} else {
 				currentPlayer = 1
 			}
-			log.Print("Turn is over. scores, new currentPlayer:", s, currentPlayer)
 		}
 	}
 	return currentPlayer
 }
 
+// roundRobin simulates a series of games between every pair of strategies
+//
+// Returns:
+//    wins: a list (of length len(strategies)) containing the number of wins for
+//  each strategy
+//    gamesPerStrategy: the number of games each strategy played
+func roundRobin(strategies []strategy, gamesPerSeries int) (wins []int, gamesPerStrategy int) {
+	wins = make([]int, len(strategies))
+	for i, _ := range strategies {
+		for j := i + 1; j < len(strategies); j++ {
+			for k := 0; k < gamesPerSeries; k++ {
+				winner := play(strategies[i], strategies[j])
+				switch winner {
+				case 0:
+					wins[i]++
+				case 1:
+					wins[j]++
+				}
+			}
+		}
+	}
+
+	// Each stragety plays gamesPerSeries times against every strategy but itself
+	// (hence the '-1')
+	gamesPerStrategy = gamesPerSeries * (len(strategies) - 1)
+
+	return wins, gamesPerStrategy
+}
+
 func main() {
-	log.Print(play(stayAtK(5), stayAtK(49)))
+	// Make one strategy for each possible staying place from 0 -> winningScore
+	strategies := make([]strategy, winningScore+1)
+	for i := range strategies {
+		strategies[i] = stayAtK(i)
+	}
+	log.Print(roundRobin(strategies, 1))
 }
