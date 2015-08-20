@@ -5,11 +5,13 @@
 package main
 
 import (
-	"log"
+	"fmt"
 	"math/rand"
 )
 
 const winningScore = 100 // The winning score in a game of Pig
+// Number of times to play each strategy against each other one
+const gamesPerSeries = 100
 
 // A score includes scores accumlated in previous turns for each player, as well
 // as the points scored by the current player in this turn.
@@ -110,11 +112,32 @@ func roundRobin(strategies []strategy, gamesPerSeries int) (wins []int, gamesPer
 	return wins, gamesPerStrategy
 }
 
+func ratioString(vals ...int) string {
+	total := 0
+	for _, val := range vals {
+		total += val
+	}
+	s := ""
+	for _, val := range vals {
+		if s != "" {
+			s += ", "
+		}
+		pct := 100 * float64(val) / float64(total)
+		s += fmt.Sprintf("%d/%d (%0.1f%%)", val, total, pct)
+	}
+	return s
+}
+
 func main() {
 	// Make one strategy for each possible staying place from 0 -> winningScore
 	strategies := make([]strategy, winningScore+1)
 	for i := range strategies {
 		strategies[i] = stayAtK(i)
 	}
-	log.Print(roundRobin(strategies, 1))
+	wins, gamesPerStrategy := roundRobin(strategies, gamesPerSeries)
+
+	for i := range strategies {
+		fmt.Printf("Wins, losses staying at i =% 4d: %s\n",
+			i, ratioString(wins[i], gamesPerStrategy-wins[i]))
+	}
 }

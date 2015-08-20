@@ -24,6 +24,6 @@ Run with `go run pig.go`
 
 `go test`
 
-### Requires
+#### Requires
 
-"github.com/stretchr/testify/assert"
+`github.com/stretchr/testify/assert`
